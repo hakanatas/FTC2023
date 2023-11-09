@@ -141,9 +141,9 @@ public class ApriltagAutoDrive extends LinearOpMode
                 double  headingError    = desiredTag.ftcPose.bearing;
                 double  yawError        = desiredTag.ftcPose.yaw;
 
-                drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn   = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                strafe = Range.clip(yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+                drive  = Range.clip(rangeError * m_SpeedKp, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                turn   = Range.clip(-headingError * m_TurnKp, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                strafe = Range.clip(yawError * m_StrafeKp, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
                 telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             } else {
@@ -159,6 +159,20 @@ public class ApriltagAutoDrive extends LinearOpMode
             sleep(10);
         }
     }
+//DC Motor Encoders To MetersPerSecond 
+    public double calculateSpeed(int encoderCounts, double timeSeconds) {
+        int countsPerRevolution = 1440;
+        int wheelDiameterMeters = 0.75;
+    
+        double revolutions = (double) encoderCounts / countsPerRevolution;
+    
+        double distanceMeters = revolutions * Math.PI * wheelDiameterMeters;
+    
+        double speedMetersPerSecond = distanceMeters / timeSeconds;
+    
+        return speedMetersPerSecond;
+    }
+
 //Field-Oriented-Mecanum Drive Codes
     public void moveRobot(double x, double y, double yaw) {
 
